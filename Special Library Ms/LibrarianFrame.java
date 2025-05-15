@@ -1,0 +1,657 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package LibraryMS;
+import java.sql.*;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
+
+/**
+ *
+ * @author USER
+ */
+
+public class LibrarianFrame extends javax.swing.JFrame {
+
+    /**
+     * Creates new form StudentFrame
+     */
+    public LibrarianFrame() {
+        initComponents();
+        Connect();
+        LibrarianData();
+        
+           Email.getDocument().addDocumentListener(new DocumentListener() {
+    public void insertUpdate(DocumentEvent e) {
+        validateEmail();
+    }
+    public void removeUpdate(DocumentEvent e) {
+        validateEmail();
+    }
+    public void changedUpdate(DocumentEvent e) {
+        validateEmail();
+    }
+
+    private void validateEmail() {
+        String emailText = Email.getText();
+        boolean isValid = isValidEmail(emailText);
+        AddBtn.setEnabled(isValid);
+        UpdateBtn.setEnabled(isValid);
+    }
+});
+        
+    }
+    
+    public boolean isValidEmail(String email) {
+    String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    return email.matches(emailRegex);
+}
+
+    
+    
+ Connection con;
+ PreparedStatement insert;
+ 
+ public void Connect(){
+     
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            con=DriverManager.getConnection("jdbc:mysql://localhost/library","root","");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     
+     
+ }
+ 
+ 
+ private void LibrarianData() {
+    try {
+        // Clear existing table data
+        DefaultTableModel model = (DefaultTableModel) table1.getModel();
+        model.setRowCount(0);
+        
+        // Set up columns if they don't exist
+        if (model.getColumnCount() == 0) {
+            model.addColumn("Librarian ID");
+            model.addColumn("Name");
+            model.addColumn("Email");
+            model.addColumn("Address");
+            model.addColumn("Role");
+        }
+
+        // Execute query to get librarian data
+        insert = con.prepareStatement("SELECT librarianid, names, email, address, Role FROM librarians");
+        ResultSet rs = insert.executeQuery();
+
+        // Populate table with data
+        while (rs.next()) {
+            Vector<Object> row = new Vector<>();
+            row.add(rs.getString("librarianid"));
+            row.add(rs.getString("names"));
+            row.add(rs.getString("email"));
+            row.add(rs.getString("address"));
+            row.add(rs.getString("Role"));
+           // row.add(rs.getString("DoneBy"));
+            model.addRow(row);
+        }
+
+        // Add row selection listener to populate form fields
+        table1.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting() && table1.getSelectedRow() != -1) {
+                    int selectedRow = table1.getSelectedRow();
+                    
+                    // Get data from selected row
+                    String librarianId = table1.getValueAt(selectedRow, 0).toString();
+                    String name = table1.getValueAt(selectedRow, 1).toString();
+                    String email = table1.getValueAt(selectedRow, 2).toString();
+                    String address = table1.getValueAt(selectedRow, 3).toString();
+                    String role = table1.getValueAt(selectedRow, 4).toString();
+                    //String DoneBy=table1.getValueAt(selectedRow, 5).toString();
+                    // Populate form fields
+                    Id.setText(librarianId);
+                    Name.setText(name);
+                    Email.setText(email);
+                    Address.setText(address);
+                    Role.setSelectedItem(role);
+                    
+                }
+            }
+        });
+        
+    } catch (SQLException ex) {
+        Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+        JOptionPane.showMessageDialog(null, "Error loading librarian data: " + ex.getMessage());
+    }
+}
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        Id = new javax.swing.JTextField();
+        Name = new javax.swing.JTextField();
+        Email = new javax.swing.JTextField();
+        Address = new javax.swing.JTextField();
+        AddBtn = new javax.swing.JButton();
+        UpdateBtn = new javax.swing.JButton();
+        DeleteBtn = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        Role = new javax.swing.JComboBox<>();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        table1 = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        totalbtn = new javax.swing.JButton();
+        total = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        Search = new javax.swing.JTextField();
+        SearchButton = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 0, 0));
+
+        jLabel1.setBackground(new java.awt.Color(204, 204, 255));
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Librarian");
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 0, 0));
+        jButton1.setText("X");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(257, 257, 257)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jButton1))
+                .addGap(17, 17, 17))
+        );
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel2.setText("LibrarianId");
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel3.setText("Librarian Names");
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel4.setText("Email");
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel5.setText("Address");
+
+        AddBtn.setBackground(new java.awt.Color(255, 204, 102));
+        AddBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AddBtn.setForeground(new java.awt.Color(255, 255, 255));
+        AddBtn.setText("Add");
+        AddBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddBtnActionPerformed(evt);
+            }
+        });
+
+        UpdateBtn.setBackground(new java.awt.Color(0, 102, 255));
+        UpdateBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        UpdateBtn.setForeground(new java.awt.Color(255, 255, 255));
+        UpdateBtn.setText("Update");
+        UpdateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                UpdateBtnActionPerformed(evt);
+            }
+        });
+
+        DeleteBtn.setBackground(new java.awt.Color(255, 51, 51));
+        DeleteBtn.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        DeleteBtn.setForeground(new java.awt.Color(255, 255, 255));
+        DeleteBtn.setText("Delete");
+        DeleteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                DeleteBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setText("Role:");
+
+        Role.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Librarian", "Admin" }));
+        Role.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                RoleActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(17, 17, 17)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jLabel3)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(Id, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(Name, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Address, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Email, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(AddBtn)
+                            .addComponent(jLabel7))
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(UpdateBtn)
+                                .addGap(18, 18, 18)
+                                .addComponent(DeleteBtn)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(Role, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Id, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Name, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(Email, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(Address, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel7))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(Role, javax.swing.GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE)
+                        .addGap(2, 2, 2)))
+                .addGap(29, 29, 29)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(AddBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                    .addComponent(UpdateBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(DeleteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        table1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "LibrarianId", "LibrarianName", "Email", "Address", "Role"
+            }
+        ));
+        jScrollPane1.setViewportView(table1);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 241, Short.MAX_VALUE)
+        );
+
+        totalbtn.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalbtn.setText("Total Users");
+        totalbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalbtnActionPerformed(evt);
+            }
+        });
+
+        total.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+
+        jLabel6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/LibraryMS/librrian.jpeg"))); // NOI18N
+
+        SearchButton.setText("Search");
+        SearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SearchButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(60, 60, 60)
+                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(74, 74, 74))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 996, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(totalbtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 429, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(SearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Search, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(SearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void AddBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddBtnActionPerformed
+        // TODO add your handling code here:
+       
+   try {
+    String id = Id.getText();
+    String name = Name.getText();
+    String email = Email.getText();
+    String address = Address.getText();
+    String role = Role.getSelectedItem().toString();
+
+    if (!isValidEmail(email)) {
+        JOptionPane.showMessageDialog(rootPane, "Invalid email format!");
+        return;
+    }
+
+    insert = con.prepareStatement("INSERT INTO librarians (librarianid, names, email, address, Role) VALUES (?, ?, ?, ?, ?)");
+    insert.setString(1, id);
+    insert.setString(2, name);
+    insert.setString(3, email);
+    insert.setString(4, address);
+    insert.setString(5, role);
+
+    insert.executeUpdate();
+
+    JOptionPane.showMessageDialog(rootPane, "Librarian Added Successfully");
+    LibrarianData();
+
+    // Reset form
+    Id.setText("");
+    Name.setText("");
+    Email.setText("");
+    Address.setText("");
+
+} catch (SQLException ex) {
+    Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+}
+
+
+    }//GEN-LAST:event_AddBtnActionPerformed
+
+    private void UpdateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdateBtnActionPerformed
+        // TODO add your handling code here:
+      try {
+    String id = Id.getText();
+    String name = Name.getText();
+    String email = Email.getText();
+    String address = Address.getText();
+    String role = Role.getSelectedItem().toString();
+
+    if (!isValidEmail(email)) {
+        JOptionPane.showMessageDialog(rootPane, "Invalid email format!");
+        return;
+    }
+
+    insert = con.prepareStatement("UPDATE librarians SET names=?, email=?, address=?, Role=? WHERE librarianid=?");
+    insert.setString(1, name);
+    insert.setString(2, email);
+    insert.setString(3, address);
+    insert.setString(4, role);
+    insert.setString(5, id);
+
+    insert.executeUpdate();
+
+    JOptionPane.showMessageDialog(rootPane, "User Updated Successfully");
+    LibrarianData();
+
+    Id.setText("");
+    Name.setText("");
+    Email.setText("");
+    Address.setText("");
+
+} catch (SQLException ex) {
+    Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+}
+
+    }//GEN-LAST:event_UpdateBtnActionPerformed
+
+    private void DeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DeleteBtnActionPerformed
+        // TODO add your handling code here:
+       
+        try {
+            int dialogueResult=JOptionPane.showConfirmDialog(rootPane, "Do you really Want to Remove this Librarian","Warning",JOptionPane.YES_NO_OPTION);
+       if(dialogueResult ==JOptionPane.YES_OPTION){
+             String id= Id.getText();
+            insert=con.prepareStatement("delete from librarians  where librarianid=? ");
+             insert.setString(1,id);
+             insert.executeUpdate();
+      
+            JOptionPane.showMessageDialog(rootPane, "Librarian Deleted Successfully!");
+            LibrarianData();
+       }
+        } catch (SQLException ex) {
+            Logger.getLogger(LibrarianFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_DeleteBtnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+      
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void totalbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalbtnActionPerformed
+        // TODO add your handling code here:
+           try {
+            String sql="select count(names) from librarians";
+            insert=con.prepareStatement(sql);
+            ResultSet Rs=insert.executeQuery();
+            if(Rs.next()){
+                String sum=Rs.getString("count(names)");
+                total.setText(sum);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_totalbtnActionPerformed
+
+    private void RoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RoleActionPerformed
+
+    }//GEN-LAST:event_RoleActionPerformed
+
+    private void SearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SearchButtonActionPerformed
+        // TODO add your handling code here:
+        String searchText = Search.getText().trim().toLowerCase();
+        DefaultTableModel model = (DefaultTableModel) table1.getModel();
+
+        // Clear current filtering
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(model);
+        table1.setRowSorter(sorter);
+
+        if (searchText.isEmpty()) {
+            sorter.setRowFilter(null);
+        } else {
+            // Filter across all columns
+            RowFilter<DefaultTableModel, Object> filter = new RowFilter<DefaultTableModel, Object>() {
+                @Override
+                public boolean include(Entry<? extends DefaultTableModel, ? extends Object> entry) {
+                    for (int i = 0; i < entry.getValueCount(); i++) {
+                        if (entry.getStringValue(i).toLowerCase().contains(searchText)) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+            };
+            sorter.setRowFilter(filter);
+        }
+    }//GEN-LAST:event_SearchButtonActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(LibrarianFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(LibrarianFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(LibrarianFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(LibrarianFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                new LibrarianFrame().setVisible(true);
+//            }
+//        });
+//    }
+     private String currentUserName;
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AddBtn;
+    private javax.swing.JTextField Address;
+    private javax.swing.JButton DeleteBtn;
+    private javax.swing.JTextField Email;
+    private javax.swing.JTextField Id;
+    private javax.swing.JTextField Name;
+    private javax.swing.JComboBox<String> Role;
+    private javax.swing.JTextField Search;
+    private javax.swing.JButton SearchButton;
+    private javax.swing.JButton UpdateBtn;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable table1;
+    private javax.swing.JTextField total;
+    private javax.swing.JButton totalbtn;
+    // End of variables declaration//GEN-END:variables
+}
